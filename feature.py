@@ -1,7 +1,5 @@
 import json
-
 tasks = []
-
 def load_tasks(filename="tasks.json"):
     global tasks
     try:
@@ -40,6 +38,7 @@ def menu():
         print("2. Add task")
         print("3. Mark task as done")
         print("4. Save & Exit")
+        print("4. Exit")
 
         choice = input("Choose an option (1-4): ").strip()
 
@@ -60,8 +59,11 @@ def menu():
             except ValueError:
                 print("Invalid input, please enter a number.")
         elif choice == "4":
+
             save_tasks()
-            print("Tasks saved. Goodbye!")
+            print("Tasks saved.")
+            print("Goodbye!")
+
             break
         else:
             print("Invalid choice. Please select 1-4.")
