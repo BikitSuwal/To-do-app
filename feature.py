@@ -1,6 +1,18 @@
-#to do app feature/task
+import json
 
 tasks = []
+
+def load_tasks(filename="tasks.json"):
+    global tasks
+    try:
+        with open(filename, "r") as f:
+            tasks = json.load(f)
+    except FileNotFoundError:
+        tasks = []
+
+def save_tasks(filename="tasks.json"):
+    with open(filename, "w") as f:
+        json.dump(tasks, f)
 
 def add_task(task):
     tasks.append({"task": task, "done": False})
@@ -21,12 +33,13 @@ def mark_done(task_number):
         print("Invalid task number")
 
 def menu():
+    load_tasks()
     while True:
         print("\nTo-Do List Menu:")
         print("1. List tasks")
         print("2. Add task")
         print("3. Mark task as done")
-        print("4. Exit")
+        print("4. Save & Exit")
 
         choice = input("Choose an option (1-4): ").strip()
 
@@ -47,7 +60,8 @@ def menu():
             except ValueError:
                 print("Invalid input, please enter a number.")
         elif choice == "4":
-            print("Goodbye!")
+            save_tasks()
+            print("Tasks saved. Goodbye!")
             break
         else:
             print("Invalid choice. Please select 1-4.")
