@@ -1,6 +1,16 @@
 import json
-
 tasks = []
+def load_tasks(filename="tasks.json"):
+    global tasks
+    try:
+        with open(filename, "r") as f:
+            tasks = json.load(f)
+    except FileNotFoundError:
+        tasks = []
+
+def save_tasks(filename="tasks.json"):
+    with open(filename, "w") as f:
+        json.dump(tasks, f)
 
 PRIORITY_ORDER = {"high": 1, "medium": 2, "low": 3}
 
@@ -52,6 +62,7 @@ def menu():
         print("3. Mark task as done")
         print("4. Save & Exit")
 
+
         choice = input("Choose an option (1-4): ").strip()
 
         if choice == "1":
@@ -59,7 +70,7 @@ def menu():
         elif choice == "2":
             task = input("Enter new task: ").strip()
             if task:
-                due_date = input("Enter due date (optional, e.g. 2025-07-01): ").strip()
+                due_date = input("Enter due date (e.g. 2025-07-01): ").strip()
                 due_date = due_date if due_date else None
                 priority = input("Enter priority (high, medium, low) [default: medium]: ").strip().lower()
                 if priority not in PRIORITY_ORDER:
@@ -78,6 +89,9 @@ def menu():
         elif choice == "4":
             save_tasks()
             print("Tasks saved. Goodbye!")
+            save_tasks()
+            print("Tasks saved.")
+            print("Goodbye!")
             break
         else:
             print("Invalid choice. Please select 1-4.")
