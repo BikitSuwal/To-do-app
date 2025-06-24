@@ -14,8 +14,8 @@ def save_tasks(filename="tasks.json"):
     with open(filename, "w") as f:
         json.dump(tasks, f)
 
-def add_task(task):
-    tasks.append({"task": task, "done": False})
+def add_task(task, due_date=None):
+    tasks.append({"task": task, "done": False, "due_date": due_date})
 
 def list_tasks():
     if not tasks:
@@ -23,7 +23,8 @@ def list_tasks():
         return
     for i, t in enumerate(tasks, start=1):
         status = "✓" if t["done"] else "✗"
-        print(f"{i}. [{status}] {t['task']}")
+        due = f" (Due: {t['due_date']})" if t.get("due_date") else ""
+        print(f"{i}. [{status}] {t['task']}{due}")
 
 def mark_done(task_number):
     if 1 <= task_number <= len(tasks):
@@ -48,7 +49,9 @@ def menu():
         elif choice == "2":
             task = input("Enter new task: ").strip()
             if task:
-                add_task(task)
+                due_date = input("Enter due date (optional, e.g. 2025-07-01): ").strip()
+                due_date = due_date if due_date else None
+                add_task(task, due_date)
                 print("Task added.")
             else:
                 print("Empty task not added.")
