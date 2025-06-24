@@ -2,6 +2,8 @@ import json
 
 tasks = []
 
+PRIORITY_ORDER = {"high": 1, "medium": 2, "low": 3}
+
 def load_tasks(filename="tasks.json"):
     global tasks
     try:
@@ -14,21 +16,29 @@ def save_tasks(filename="tasks.json"):
     with open(filename, "w") as f:
         json.dump(tasks, f)
 
-def add_task(task, due_date=None):
-    tasks.append({"task": task, "done": False, "due_date": due_date})
+def add_task(task, due_date=None, priority="medium"):
+    tasks.append({"task": task, "done": False, "due_date": due_date, "priority": priority})
 
 def list_tasks():
     if not tasks:
         print("No tasks found.")
         return
-    for i, t in enumerate(tasks, start=1):
+    # Sort tasks by priority (high, medium, low)
+    sorted_tasks = sorted(tasks, key=lambda t: PRIORITY_ORDER.get(t.get("priority", "medium"), 2))
+    for i, t in enumerate(sorted_tasks, start=1):
         status = "✓" if t["done"] else "✗"
         due = f" (Due: {t['due_date']})" if t.get("due_date") else ""
-        print(f"{i}. [{status}] {t['task']}{due}")
+        priority = t.get("priority", "medium").capitalize()
+        print(f"{i}. [{status}] {t['task']}{due} [Priority: {priority}]")
 
 def mark_done(task_number):
-    if 1 <= task_number <= len(tasks):
-        tasks[task_number - 1]["done"] = True
+    # Mark done in the sorted list, so get the sorted index
+    sorted_tasks = sorted(tasks, key=lambda t: PRIORITY_ORDER.get(t.get("priority", "medium"), 2))
+    if 1 <= task_number <= len(sorted_tasks):
+        # Find the original index in the tasks list
+        task_to_mark = sorted_tasks[task_number - 1]
+        orig_index = tasks.index(task_to_mark)
+        tasks[orig_index]["done"] = True
         print(f"Task {task_number} marked as done.")
     else:
         print("Invalid task number")
@@ -37,7 +47,7 @@ def menu():
     load_tasks()
     while True:
         print("\nTo-Do List Menu:")
-        print("1. List tasks")
+        print("1. List tasks (sorted by priority)")
         print("2. Add task")
         print("3. Mark task as done")
         print("4. Save & Exit")
@@ -51,7 +61,10 @@ def menu():
             if task:
                 due_date = input("Enter due date (optional, e.g. 2025-07-01): ").strip()
                 due_date = due_date if due_date else None
-                add_task(task, due_date)
+                priority = input("Enter priority (high, medium, low) [default: medium]: ").strip().lower()
+                if priority not in PRIORITY_ORDER:
+                    priority = "medium"
+                add_task(task, due_date, priority)
                 print("Task added.")
             else:
                 print("Empty task not added.")
