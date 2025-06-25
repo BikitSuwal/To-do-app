@@ -100,6 +100,18 @@ class ToDoListManager:
                 ])
         logging.info("Exported tasks to CSV file: %s", filename)
 
+    def delete_task(self, task_number):
+        sorted_tasks = sorted(self.tasks, key=lambda t: PRIORITY_ORDER.get(t.priority, 2))
+        if 1 <= task_number <= len(sorted_tasks):
+            task_to_delete = sorted_tasks[task_number - 1]
+            orig_index = self.tasks.index(task_to_delete)
+            deleted_task = self.tasks.pop(orig_index)
+            logging.info("Deleted task: '%s'", deleted_task.task)
+            print(f"Task {task_number} deleted.")
+        else:
+            logging.warning("Attempted to delete invalid task number: %d", task_number)
+            print("Invalid task number")
+
 def menu():
     manager = ToDoListManager()
     while True:
@@ -109,8 +121,9 @@ def menu():
         print("3. Mark task as done")
         print("4. Save & Exit")
         print("5. Export tasks to CSV")
+        print("6. Delete task")  
 
-        choice = input("Choose an option (1-5): ").strip()
+        choice = input("Choose an option (1-6): ").strip()
 
         if choice == "1":
             manager.list_tasks()
@@ -144,9 +157,17 @@ def menu():
         elif choice == "5":
             manager.export_tasks_to_csv()
             print("Tasks exported to tasks_export.csv")
+        elif choice == "6":
+            manager.list_tasks()
+            try:
+                num = int(input("Enter task number to delete: ").strip())
+                manager.delete_task(num)
+            except ValueError:
+                logging.error("Non-integer input for deleting task.")
+                print("Invalid input, please enter a number.")
         else:
-            logging.warning("Invalid menu choice: %s", choice)
-            print("Invalid choice. Please select 1-5.")
+            logging.error("Invalid menu choice: %s", choice)
+            print("Invalid choice. Please select 1-6.")
 
 if __name__ == "__main__":
     menu()
