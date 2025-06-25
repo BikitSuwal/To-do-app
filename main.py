@@ -1,5 +1,6 @@
 import json
 import logging
+import csv
 
 # Configure logging
 logging.basicConfig(
@@ -55,6 +56,20 @@ def mark_done(task_number):
         logging.warning("Attempted to mark invalid task number: %d", task_number)
         print("Invalid task number")
 
+def export_tasks_to_csv(filename="tasks_export.csv"):
+    with open(filename, mode="w", newline='', encoding="utf-8") as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(["task", "duedate", "priority", "status"])
+        for t in tasks:
+            status = "done" if t.get("done") else "not done"
+            writer.writerow([
+                t.get("task", ""),
+                t.get("due_date", ""),
+                t.get("priority", ""),
+                status
+            ])
+    logging.info("Exported tasks to CSV file: %s", filename)
+
 def menu():
     load_tasks()
     while True:
@@ -63,8 +78,9 @@ def menu():
         print("2. Add task")
         print("3. Mark task as done")
         print("4. Save & Exit")
+        print("5. Export tasks to CSV")
 
-        choice = input("Choose an option (1-4): ").strip()
+        choice = input("Choose an option (1-5): ").strip()
 
         if choice == "1":
             list_tasks()
@@ -95,9 +111,12 @@ def menu():
             logging.info("User exited and tasks saved.")
             print("Tasks saved. Goodbye!")
             break
+        elif choice == "5":
+            export_tasks_to_csv()
+            print("Tasks exported to tasks_export.csv")
         else:
             logging.warning("Invalid menu choice: %s", choice)
-            print("Invalid choice. Please select 1-4.")
+            print("Invalid choice. Please select 1-5.")
 
 if __name__ == "__main__":
     menu()
