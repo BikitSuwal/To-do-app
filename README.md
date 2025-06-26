@@ -32,7 +32,8 @@ Features include task creation, marking as done, deletion, CSV export, and robus
 ├── tasks.json             # JSON file for storing tasks (auto-created)
 ├── tasks\_export.csv       # Exported tasks in CSV format (optional)
 ├── todo\_app.log           # Logs for debugging and tracking actions
-├── main\_script.py         # Main script 
+├── main\_script.py         # Main script
+├── Test_main\_testing      # For automated testing of the program function (adding, removing, listing)
 └── README.md              # You're reading this!
 
 ````
